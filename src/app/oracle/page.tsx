@@ -1,11 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { 
-  Zap, 
-  Leaf, 
-  DollarSign, 
   RefreshCcw,
   ShieldCheck,
   Cpu,
@@ -13,7 +10,6 @@ import {
   Activity,
   Database,
   Link,
-  ChevronRight,
   Lock,
   Wifi,
   Radio,
@@ -23,14 +19,11 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  ReferenceLine,
   AreaChart,
   Area
 } from 'recharts';

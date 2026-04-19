@@ -2,31 +2,25 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import Image from 'next/image';
 import { 
   TrendingUp, 
   Leaf, 
   ShieldCheck, 
-  BarChart3, 
-  ArrowUpRight, 
   Wallet,
   Globe,
   CheckCircle2,
   X,
-  LayoutGrid,
   Zap,
   Activity,
   ArrowRight,
   Database,
-  Lock,
-  RefreshCcw,
-  PieChart,
   ExternalLink,
   ChevronDown,
-  Building2,
   Cpu,
-  Layers,
   Sparkles,
-  Gavel
+  Gavel,
+  PieChart
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -279,7 +273,12 @@ export default function Portfolio2Page() {
                 className="group relative rounded-[3rem] overflow-hidden bg-card border border-border shadow-2xl hover:shadow-primary/10 transition-all cursor-pointer"
               >
                 <div className="aspect-[4/5] relative overflow-hidden">
-                  <img src={asset.img} alt={asset.name} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-1000" />
+                  <Image 
+                    src={asset.img} 
+                    alt={asset.name} 
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-1000" 
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                   <div className="absolute top-6 right-6 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-white">
                     <p className="text-[8px] font-black uppercase tracking-widest mb-1 opacity-60 text-center">Projected Yield</p>

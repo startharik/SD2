@@ -3,38 +3,34 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  DollarSign, 
-  History, 
-  Calculator, 
-  ArrowRight,
-  RefreshCcw,
-  CheckCircle2,
+  TrendingUp, 
+  ArrowUpRight, 
+  ArrowDownRight,
   Calendar,
-  GraduationCap,
+  Wallet,
+  Globe,
+  PieChart,
+  Calculator,
   Building2,
   Video,
-  ShoppingBag,
-  Leaf,
-  Landmark,
-  Cpu,
-  Zap,
-  TrendingUp,
-  PieChart,
-  Activity,
-  ArrowUpRight,
+  GraduationCap,
   ShieldCheck,
-  Globe,
-  Wallet,
-  ArrowDownRight
+  CheckCircle2,
+  ArrowRight,
+  RefreshCcw,
+  Zap,
+  History,
+  Cpu,
+  DollarSign
 } from 'lucide-react';
 import { 
   AreaChart, 
   Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
+  XAxis,
+  YAxis,
+  CartesianGrid,
   BarChart,
   Bar,
   Cell
@@ -42,27 +38,29 @@ import {
 import { cn } from '@/lib/utils';
 
 const mockHistoryData = [
-  { month: 'Oct 25', revenue: 380000, payout: 114000 },
-  { month: 'Nov 25', revenue: 410000, payout: 123000 },
-  { month: 'Dec 25', revenue: 450000, payout: 135000 },
-  { month: 'Jan 26', revenue: 410000, payout: 123000 },
-  { month: 'Feb 26', revenue: 385200, payout: 115560 },
-  { month: 'Mar 26', revenue: 420500, payout: 126150 },
+  { month: 'Jan', revenue: 120000, payout: 36000 },
+  { month: 'Feb', revenue: 145000, payout: 43500 },
+  { month: 'Mar', revenue: 138000, payout: 41400 },
+  { month: 'Apr', revenue: 162000, payout: 48600 },
+  { month: 'May', revenue: 185000, payout: 55500 },
+  { month: 'Jun', revenue: 178000, payout: 53400 },
 ];
 
 const compositionData = [
   { name: 'Events', value: 35, color: '#10b981' },
   { name: 'Education', value: 25, color: '#3b82f6' },
-  { name: 'Leasing', value: 20, color: '#f59e0b' },
-  { name: 'Media', value: 10, color: '#8b5cf6' },
-  { name: 'Others', value: 10, color: '#64748b' },
+  { name: 'Leasing', value: 25, color: '#6366f1' },
+  { name: 'Media', value: 15, color: '#f59e0b' },
 ];
 
 export default function RevenuePage() {
+  const tabs = ['overview', 'simulator', 'audit'] as const;
+  const [activeTab, setActiveTab] = useState<typeof tabs[number]>('overview');
   const [noiInput, setNoiInput] = useState('1000000');
   const [isSimulating, setIsSimulating] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'simulator' | 'audit'>('overview');
+
+  const estimatedPayout = Number(noiInput) * 0.3;
 
   const handleSimulate = () => {
     setIsSimulating(true);
@@ -72,9 +70,6 @@ export default function RevenuePage() {
       setShowResult(true);
     }, 1500);
   };
-
-  const payoutRatio = 0.30;
-  const estimatedPayout = parseFloat(noiInput) * payoutRatio;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
@@ -115,10 +110,10 @@ export default function RevenuePage() {
           
           <div className="flex items-center gap-3 relative z-10 mt-6 md:mt-0">
             <div className="flex p-1 rounded-xl bg-background border border-border">
-              {['overview', 'simulator', 'audit'].map((tab) => (
+              {tabs.map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab as any)}
+                  onClick={() => setActiveTab(tab)}
                   className={cn(
                     "px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
                     activeTab === tab ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:text-foreground"

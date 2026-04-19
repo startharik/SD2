@@ -3,33 +3,25 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  CheckCircle2, 
   Clock, 
   Users, 
-  ArrowRight,
-  BarChart3,
-  TrendingUp,
   FileText,
   Gavel,
   RefreshCcw,
-  Zap,
   Shield,
-  Search,
-  Download,
   ExternalLink,
-  ChevronRight,
   Scale,
   Activity,
-  UserPlus,
   Landmark,
-  PieChart
+  CheckCircle2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function GovernancePage() {
   const [votedId, setVotedId] = useState<number | null>(null);
   const [isVoting, setIsVoting] = useState(false);
-  const [activeTab, setActiveTab] = useState<'proposals' | 'voting-power' | 'treasury'>('proposals');
+  const tabs = ['proposals', 'voting-power', 'treasury'] as const;
+  const [activeTab, setActiveTab] = useState<typeof tabs[number]>('proposals');
 
   const proposals = [
     {
@@ -103,10 +95,10 @@ export default function GovernancePage() {
           
           <div className="flex items-center gap-3 relative z-10 mt-6 md:mt-0">
             <div className="flex p-1 rounded-xl bg-background border border-border">
-              {['proposals', 'voting-power', 'treasury'].map((tab) => (
+              {tabs.map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab as any)}
+                  onClick={() => setActiveTab(tab)}
                   className={cn(
                     "px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
                     activeTab === tab ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:text-foreground"
@@ -155,7 +147,7 @@ export default function GovernancePage() {
                 </button>
               </div>
 
-              {proposals.map((proposal, i) => (
+              {proposals.map((proposal) => (
                 <div 
                   key={proposal.id}
                   className="p-8 rounded-[2.5rem] bg-card border border-border shadow-xl hover:border-primary/30 transition-all group"

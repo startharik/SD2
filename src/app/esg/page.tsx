@@ -3,26 +3,23 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Leaf, 
-  Wind, 
-  Globe, 
-  BarChart3, 
-  CheckCircle2,
-  Trophy,
-  ArrowUpRight,
-  Droplets,
-  Trees,
-  FileText,
-  ShieldCheck,
-  Building2,
-  ExternalLink,
-  Download,
-  Activity,
-  Zap,
-  LayoutGrid,
-  Shield,
-  Award
-} from 'lucide-react';
+   Leaf, 
+   Wind, 
+   Globe, 
+   Trophy,
+   ArrowUpRight,
+   Droplets,
+   Trees,
+   FileText,
+   ShieldCheck,
+   Building2,
+   ExternalLink,
+   Download,
+   Activity,
+   Award,
+   Shield,
+   LayoutGrid
+ } from 'lucide-react';
 import { 
   PieChart, 
   Pie, 
@@ -54,7 +51,8 @@ const impactHistory = [
 ];
 
 export default function ESGPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'environmental' | 'social' | 'governance'>('overview');
+  const tabs = ['overview', 'environmental', 'social', 'governance'] as const;
+  const [activeTab, setActiveTab] = useState<typeof tabs[number]>('overview');
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
@@ -95,10 +93,10 @@ export default function ESGPage() {
           
           <div className="flex items-center gap-3 relative z-10 mt-6 md:mt-0">
             <div className="flex p-1 rounded-xl bg-background border border-border">
-              {['overview', 'environmental', 'social', 'governance'].map((tab) => (
+              {tabs.map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab as any)}
+                  onClick={() => setActiveTab(tab)}
                   className={cn(
                     "px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
                     activeTab === tab ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:text-foreground"

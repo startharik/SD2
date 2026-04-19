@@ -3,26 +3,25 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ShieldCheck, 
-  UserCheck, 
-  Lock, 
-  RefreshCcw,
-  CheckCircle2,
-  XCircle,
-  FileText,
-  ArrowRight,
-  Shield,
-  Activity,
-  Zap,
-  Globe,
-  Database,
-  Search,
-  Download,
-  ExternalLink,
-  ChevronRight,
-  Gavel,
-  Scale
-} from 'lucide-react';
+   ShieldCheck, 
+   UserCheck, 
+   Lock, 
+   RefreshCcw, 
+   CheckCircle2, 
+   XCircle,
+   FileText, 
+   Shield, 
+   Activity, 
+   Zap, 
+   Globe, 
+   Database, 
+   Search,
+   Download,
+   ExternalLink, 
+   ChevronRight,
+   Gavel,
+   Scale
+ } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function CompliancePage() {
@@ -32,7 +31,8 @@ export default function CompliancePage() {
   const toAddress = '0xabcd...efgh';
   const [isWhitelisted, setIsWhitelisted] = useState(false);
   const [simulationResult, setSimulationResult] = useState<null | 'success' | 'error'>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'verification' | 'rules' | 'logs'>('overview');
+  const tabs = ['overview', 'verification', 'rules', 'logs'] as const;
+  const [activeTab, setActiveTab] = useState<typeof tabs[number]>('overview');
 
   const handleKyc = () => {
     setIsProcessing(true);
@@ -54,7 +54,7 @@ export default function CompliancePage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20">
       
-      {/* 1. REGULATORY HEADER */}
+      {/* 1. HERO HEADER: COMPLIANCE STATUS */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <div className="lg:col-span-3 p-6 rounded-[2rem] bg-card border border-border flex flex-col md:flex-row items-center justify-between overflow-hidden relative group">
           <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -86,10 +86,10 @@ export default function CompliancePage() {
           
           <div className="flex items-center gap-3 relative z-10 mt-6 md:mt-0">
             <div className="flex p-1 rounded-xl bg-background border border-border">
-              {['overview', 'verification', 'rules', 'logs'].map((tab) => (
+              {tabs.map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab as any)}
+                  onClick={() => setActiveTab(tab)}
                   className={cn(
                     "px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
                     activeTab === tab ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:text-foreground"
