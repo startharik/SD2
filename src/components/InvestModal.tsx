@@ -9,7 +9,7 @@ import {
   RefreshCcw, 
   ShieldCheck, 
   Info,
-  ArrowUpRight
+  TrendingUp
 } from 'lucide-react';
 
 interface InvestModalProps {
@@ -19,175 +19,142 @@ interface InvestModalProps {
 }
 
 export function InvestModal({ isOpen, onClose, onSuccess }: InvestModalProps) {
-  const [step, setStep] = useState<'input' | 'processing' | 'success'>('input');
+  const [status, setStatus] = useState<'idle' | 'processing' | 'success'>('idle');
   const [amount, setAmount] = useState('5000');
-  const pricePerUat = 1.00;
 
   useEffect(() => {
     if (!isOpen) {
-      // Reset state when closed
       setTimeout(() => {
-        setStep('input');
+        setStatus('idle');
         setAmount('5000');
       }, 300);
     }
   }, [isOpen]);
 
-  const handleConfirm = () => {
-    setStep('processing');
+  const handleInvest = () => {
+    setStatus('processing');
     setTimeout(() => {
-      setStep('success');
+      setStatus('success');
       onSuccess(parseFloat(amount));
     }, 2000);
   };
-
-  const uatReceived = parseFloat(amount) / pricePerUat;
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Backdrop */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#020617]/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-md"
           />
-
-          {/* Modal */}
+          
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-lg bg-slate-950 border border-emerald-950/50 rounded-3xl overflow-hidden shadow-2xl shadow-emerald-500/10"
+            className="relative w-full max-w-lg bg-slate-950 border border-emerald-950/50 rounded-[2.5rem] shadow-2xl overflow-hidden"
           >
-            {/* Close Button */}
-            <button 
-              onClick={onClose}
-              className="absolute top-6 right-6 p-2 rounded-full bg-slate-900/50 text-slate-400 hover:text-white transition-colors z-10"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="p-8">
-              {step === 'input' && (
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <h2 className="text-2xl font-bold text-white">Invest in SD Covenant – Buy UAT</h2>
-                    <p className="text-emerald-500 text-xs font-bold uppercase tracking-widest">
-                      Regulated RWA + ESG + Revenue-Distribution Protocol
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-between">
-                    <span className="text-slate-400 text-sm">Current Price</span>
-                    <span className="text-white font-bold">${pricePerUat.toFixed(2)} <span className="text-slate-500 text-xs font-medium">per UAT</span></span>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-slate-400">Investment Amount (USD)</label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</div>
-                      <input 
-                        type="number" 
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        className="w-full bg-slate-900/50 border border-emerald-950/30 rounded-2xl pl-8 pr-4 py-4 text-white text-xl font-bold focus:outline-none focus:border-emerald-500 transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-6 rounded-2xl bg-slate-900/30 border border-slate-800 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400 text-sm">You will receive</span>
-                      <span className="text-emerald-500 text-xl font-bold">{uatReceived.toLocaleString()} UAT</span>
-                    </div>
-                    
-                    <div className="h-px bg-slate-800" />
-                    
-                    <div className="flex items-start gap-3">
-                      <Info className="text-emerald-500 shrink-0 mt-0.5" size={16} />
-                      <p className="text-xs text-slate-400 leading-relaxed">
-                        25–30% NOI yield from physical assets (solar + community revenue) distributed monthly in USDC.
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-emerald-500 bg-emerald-500/5 p-3 rounded-xl border border-emerald-500/10">
-                      <ShieldCheck size={16} />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">KYC/AML Verified – Whitelisted Investor</span>
-                    </div>
-                  </div>
-
-                  <button 
-                    onClick={handleConfirm}
-                    className="w-full py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-lg transition-all flex items-center justify-center gap-2 group shadow-lg shadow-emerald-500/20"
-                  >
-                    Confirm Purchase <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
+            {/* Header */}
+            <div className="p-8 border-b border-emerald-950/30 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500">
+                  <TrendingUp size={24} />
                 </div>
-              )}
+                <div>
+                  <h3 className="text-2xl font-black text-white tracking-tight">Institutional Investment</h3>
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-1">UAT Secondary Market</p>
+                </div>
+              </div>
+              <button 
+                onClick={onClose}
+                className="w-10 h-10 rounded-xl hover:bg-slate-900 text-slate-400 flex items-center justify-center transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-              {step === 'processing' && (
-                <div className="py-12 flex flex-col items-center justify-center space-y-6 text-center">
-                  <div className="relative">
-                    <div className="w-20 h-20 rounded-full border-4 border-emerald-500/20" />
-                    <motion.div 
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-0 w-20 h-20 rounded-full border-4 border-transparent border-t-emerald-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-white">Processing Transaction</h3>
-                    <p className="text-slate-400 text-sm">Deploying to Polygon L2 Network...</p>
-                  </div>
-                  <div className="px-4 py-2 rounded-full bg-slate-900 border border-slate-800 flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">TX: 0x8f2...a321</span>
+            <div className="p-8 space-y-8">
+              {/* Asset Info Card */}
+              <div className="p-6 rounded-2xl bg-slate-900/50 border border-emerald-950/20 flex items-center gap-5">
+                <div className="w-16 h-16 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                   <TrendingUp className="text-emerald-500" size={32} />
+                </div>
+                <div>
+                  <p className="text-sm font-black text-white tracking-tight">SD Covenant Community Center</p>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Active</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">•</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">9.2% Expected Yield</span>
                   </div>
                 </div>
-              )}
+              </div>
 
-              {step === 'success' && (
-                <div className="py-6 flex flex-col items-center justify-center space-y-8 text-center">
-                  <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="w-20 h-20 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/40"
-                  >
-                    <CheckCircle2 size={40} className="text-black" />
-                  </motion.div>
-
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-white">Investment Confirmed!</h3>
-                    <p className="text-slate-400 text-sm">
-                      <span className="text-emerald-500 font-bold">{parseFloat(amount).toLocaleString()} UAT</span> added to your wallet
-                    </p>
-                  </div>
-
-                  <div className="w-full p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center gap-2">
-                    <RefreshCcw className="text-emerald-500" size={16} />
-                    <span className="text-sm text-emerald-200 font-medium">Expected next yield: USDC in 12 days</span>
-                  </div>
-
-                  <div className="w-full flex flex-col gap-3">
-                    <button 
-                      onClick={onClose}
-                      className="w-full py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold transition-all flex items-center justify-center gap-2 group"
-                    >
-                      View Portfolio <ArrowUpRight size={18} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
-                    <button 
-                      onClick={onClose}
-                      className="w-full py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold transition-all"
-                    >
-                      Close
-                    </button>
+              {/* Input Area */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-end px-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Investment Amount</label>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Balance: 2,500.00 USDC</span>
+                </div>
+                <div className="relative">
+                  <input 
+                    type="number" 
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full bg-slate-900/50 border border-emerald-950/30 rounded-2xl px-6 py-5 text-2xl font-black text-white focus:outline-none focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/5 transition-all"
+                    placeholder="0.00"
+                  />
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                    <button className="px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-colors">Max</button>
+                    <span className="font-black text-slate-400">USDC</span>
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl border border-emerald-950/20 space-y-1">
+                  <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">UAT to Receive</p>
+                  <p className="text-lg font-black text-white tracking-tight">
+                    {amount ? (parseFloat(amount) * 1.2).toLocaleString() : '0.00'}
+                  </p>
+                </div>
+                <div className="p-4 rounded-2xl border border-emerald-950/20 space-y-1">
+                  <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest">Platform Fee</p>
+                  <p className="text-lg font-black text-slate-400 tracking-tight">$0.00</p>
+                </div>
+              </div>
+
+              {/* Compliance Note */}
+              <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-4">
+                <Info size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                <p className="text-[10px] text-amber-500/80 font-bold leading-relaxed">
+                  By investing, you confirm that you have read the SD Covenant Prospectus and agree to the institutional transfer restrictions of ERC-3643.
+                </p>
+              </div>
+
+              {/* Action Button */}
+              <button 
+                onClick={handleInvest}
+                disabled={status !== 'idle' || !amount}
+                className="w-full py-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-800 text-black font-black text-lg transition-all flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20"
+              >
+                {status === 'processing' ? (
+                  <RefreshCcw className="animate-spin" size={20} />
+                ) : status === 'success' ? (
+                  <CheckCircle2 size={20} />
+                ) : (
+                  <>Confirm Investment <ArrowRight size={20} /></>
+                )}
+              </button>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 bg-slate-900/30 border-t border-emerald-950/30 flex items-center justify-center gap-3">
+              <ShieldCheck size={14} className="text-emerald-500" />
+              <span className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">Secured by SD Compliance Layer</span>
             </div>
           </motion.div>
         </div>

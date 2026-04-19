@@ -5,6 +5,7 @@ import {
   RainbowKitProvider,
   getDefaultConfig,
   darkTheme,
+  lightTheme,
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
 import {
@@ -15,6 +16,7 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
+import { ThemeProvider, useTheme } from 'next-themes';
 
 const config = getDefaultConfig({
   appName: 'SD Covenant Community Center',
@@ -25,20 +27,40 @@ const config = getDefaultConfig({
 
 const queryClient = new QueryClient();
 
+function RainbowKitWrapper({ children }: { children: React.ReactNode }) {
+  const { resolvedTheme } = useTheme();
+  
+  return (
+    <RainbowKitProvider 
+      theme={resolvedTheme === 'dark' ? darkTheme({
+        accentColor: '#10b981', // emerald-500
+        accentColorForeground: 'white',
+        borderRadius: 'medium',
+        fontStack: 'system',
+        overlayBlur: 'small',
+      }) : lightTheme({
+        accentColor: '#10b981', // emerald-500
+        accentColorForeground: 'white',
+        borderRadius: 'medium',
+        fontStack: 'system',
+        overlayBlur: 'small',
+      })}
+    >
+      {children}
+    </RainbowKitProvider>
+  );
+}
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={darkTheme({
-          accentColor: '#10b981', // emerald-500
-          accentColorForeground: 'white',
-          borderRadius: 'medium',
-          fontStack: 'system',
-          overlayBlur: 'small',
-        })}>
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitWrapper>
+            {children}
+          </RainbowKitWrapper>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ThemeProvider>
   );
 }

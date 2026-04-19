@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle2, 
   Clock, 
@@ -11,12 +11,25 @@ import {
   TrendingUp,
   FileText,
   Gavel,
-  RefreshCcw
+  RefreshCcw,
+  Zap,
+  Shield,
+  Search,
+  Download,
+  ExternalLink,
+  ChevronRight,
+  Scale,
+  Activity,
+  UserPlus,
+  Landmark,
+  PieChart
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function GovernancePage() {
   const [votedId, setVotedId] = useState<number | null>(null);
   const [isVoting, setIsVoting] = useState(false);
+  const [activeTab, setActiveTab] = useState<'proposals' | 'voting-power' | 'treasury'>('proposals');
 
   const proposals = [
     {
@@ -27,7 +40,8 @@ export default function GovernancePage() {
       votesFor: 12450000,
       votesAgainst: 1200000,
       endsIn: '2d 14h',
-      creator: 'SD Foundation'
+      creator: 'SD Foundation',
+      type: 'Asset Allocation'
     },
     {
       id: 2,
@@ -37,7 +51,8 @@ export default function GovernancePage() {
       votesFor: 25000000,
       votesAgainst: 500000,
       endsIn: 'Closed',
-      creator: 'Institutional LP'
+      creator: 'Institutional LP',
+      type: 'Liquidity'
     }
   ];
 
@@ -50,172 +65,288 @@ export default function GovernancePage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <Gavel className="text-emerald-500 fill-emerald-500/20" />
-            Governance Preview
-          </h1>
-          <p className="text-slate-400">Institutional DAO for asset allocation and treasury management.</p>
-        </div>
-        
-        <div className="flex items-center gap-8 p-6 rounded-2xl bg-slate-950/50 border border-emerald-950/30 backdrop-blur-md">
-          <div className="flex flex-col">
-            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Your Voting Power</span>
-            <span className="text-white font-bold text-lg">1,240,500 UAT</span>
+    <div className="max-w-7xl mx-auto space-y-6 pb-20">
+      
+      {/* 1. GOVERNANCE HERO HEADER */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="lg:col-span-3 p-6 rounded-[2rem] bg-card border border-border flex flex-col md:flex-row items-center justify-between overflow-hidden relative group">
+          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          <div className="flex flex-col md:flex-row items-center gap-6 relative z-10 w-full md:w-auto">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                <Gavel size={24} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-foreground tracking-tight leading-none">DAO Governance</h1>
+                <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mt-2">Institutional Protocol Control</p>
+              </div>
+            </div>
+            <div className="hidden md:block h-10 w-px bg-border" />
+            <div className="flex items-center gap-8">
+              <div>
+                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Voting Power</p>
+                <p className="text-xl font-black text-foreground tracking-tight">1.2M <span className="text-[10px] text-primary">UAT</span></p>
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Active</p>
+                <p className="text-xl font-black text-primary tracking-tight">01</p>
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">DAO Status</p>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <p className="text-xs font-black text-foreground uppercase tracking-widest">Connected</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="h-10 w-px bg-slate-800" />
-          <div className="flex flex-col">
-            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Active Proposals</span>
-            <span className="text-emerald-500 font-bold text-lg">1</span>
+          
+          <div className="flex items-center gap-3 relative z-10 mt-6 md:mt-0">
+            <div className="flex p-1 rounded-xl bg-background border border-border">
+              {['proposals', 'voting-power', 'treasury'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab as any)}
+                  className={cn(
+                    "px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all",
+                    activeTab === tab ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-500 hover:text-foreground"
+                  )}
+                >
+                  {tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 rounded-[2rem] bg-slate-900 text-white flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative z-10 flex justify-between items-start">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">DAO Health</p>
+            <Activity size={16} className="text-primary" />
+          </div>
+          <div className="relative z-10 mt-4">
+            <p className="text-2xl font-black tracking-tight leading-none">74.2% Quorum</p>
+            <div className="w-full h-1 bg-white/10 rounded-full mt-3 overflow-hidden">
+              <div className="w-[74.2%] h-full bg-primary" />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Proposal List */}
-        <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <FileText className="text-emerald-500" size={20} />
-            Active & Recent Proposals
-          </h2>
-          
-          {proposals.map((proposal, i) => (
-            <motion.div 
-              key={proposal.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="p-8 rounded-3xl bg-slate-950/40 border border-emerald-950/30 backdrop-blur-md hover:border-emerald-500/30 transition-all group"
-            >
-              <div className="flex justify-between items-start mb-6">
-                <div className="space-y-1">
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
-                    proposal.status === 'Active' 
-                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
-                      : 'bg-slate-500/10 text-slate-500 border-slate-500/20'
-                  }`}>
-                    {proposal.status}
-                  </span>
-                  <h3 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors leading-tight">
-                    {proposal.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">Proposed by {proposal.creator}</p>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-1.5 text-slate-500 text-xs mb-1 font-medium">
-                    <Clock size={14} /> Ends in {proposal.endsIn}
-                  </div>
-                </div>
+      <AnimatePresence mode="wait">
+        {activeTab === 'proposals' && (
+          <motion.div 
+            key="proposals"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+          >
+            {/* Proposals List */}
+            <div className="lg:col-span-8 space-y-6">
+              <div className="flex items-center justify-between px-2">
+                <h2 className="text-xl font-black text-foreground flex items-center gap-3 tracking-tight">
+                  <FileText size={20} className="text-primary" />
+                  Active Proposals
+                </h2>
+                <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                  Create Proposal
+                </button>
               </div>
 
-              <p className="text-slate-400 text-sm leading-relaxed mb-8">
-                {proposal.description}
-              </p>
-
-              <div className="space-y-4 mb-8">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs font-bold uppercase">
-                    <span className="text-emerald-500">For</span>
-                    <span className="text-white">{(proposal.votesFor / 1000000).toFixed(1)}M UAT ({(proposal.votesFor / (proposal.votesFor + proposal.votesAgainst) * 100).toFixed(1)}%)</span>
-                  </div>
-                  <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500" style={{ width: `${(proposal.votesFor / (proposal.votesFor + proposal.votesAgainst) * 100)}%` }} />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs font-bold uppercase">
-                    <span className="text-red-500">Against</span>
-                    <span className="text-white">{(proposal.votesAgainst / 1000000).toFixed(1)}M UAT ({(proposal.votesAgainst / (proposal.votesFor + proposal.votesAgainst) * 100).toFixed(1)}%)</span>
-                  </div>
-                  <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-red-500" style={{ width: `${(proposal.votesAgainst / (proposal.votesFor + proposal.votesAgainst) * 100)}%` }} />
-                  </div>
-                </div>
-              </div>
-
-              {proposal.status === 'Active' && (
-                <div className="flex gap-4">
-                  {votedId === proposal.id ? (
-                    <div className="w-full py-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-bold flex items-center justify-center gap-2">
-                      <CheckCircle2 size={18} /> You voted FOR
+              {proposals.map((proposal, i) => (
+                <div 
+                  key={proposal.id}
+                  className="p-8 rounded-[2.5rem] bg-card border border-border shadow-xl hover:border-primary/30 transition-all group"
+                >
+                  <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className={cn(
+                          "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                          proposal.status === 'Active' ? "bg-primary/10 text-primary border-primary/20" : "bg-slate-100 dark:bg-slate-800 text-slate-400 border-border"
+                        )}>
+                          {proposal.status}
+                        </span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{proposal.type}</span>
+                      </div>
+                      <h3 className="text-2xl font-black text-foreground group-hover:text-primary transition-colors tracking-tight leading-tight">
+                        {proposal.title}
+                      </h3>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Proposed by {proposal.creator}</p>
                     </div>
-                  ) : (
-                    <>
-                      <button 
-                        onClick={() => handleVote(proposal.id)}
-                        disabled={isVoting}
-                        className="flex-1 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold transition-all flex items-center justify-center gap-2"
-                      >
-                        {isVoting ? <RefreshCcw className="animate-spin" size={18} /> : 'Vote FOR'}
-                      </button>
-                      <button 
-                        disabled={isVoting}
-                        className="flex-1 py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all"
-                      >
-                        Vote AGAINST
-                      </button>
-                    </>
+                    <div className="flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest bg-foreground/[0.02] px-4 py-2 rounded-full border border-border">
+                      <Clock size={14} className="text-primary" /> Ends: {proposal.endsIn}
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-slate-500 font-medium leading-relaxed mb-10">
+                    {proposal.description}
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                        <span className="text-primary">In Favor</span>
+                        <span className="text-foreground">{(proposal.votesFor / 1000000).toFixed(1)}M UAT ({(proposal.votesFor / (proposal.votesFor + proposal.votesAgainst) * 100).toFixed(1)}%)</span>
+                      </div>
+                      <div className="h-2 w-full bg-foreground/[0.03] rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full" style={{ width: `${(proposal.votesFor / (proposal.votesFor + proposal.votesAgainst) * 100)}%` }} />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                        <span className="text-rose-500">Against</span>
+                        <span className="text-foreground">{(proposal.votesAgainst / 1000000).toFixed(1)}M UAT ({(proposal.votesAgainst / (proposal.votesFor + proposal.votesAgainst) * 100).toFixed(1)}%)</span>
+                      </div>
+                      <div className="h-2 w-full bg-foreground/[0.03] rounded-full overflow-hidden">
+                        <div className="h-full bg-rose-500 rounded-full" style={{ width: `${(proposal.votesAgainst / (proposal.votesFor + proposal.votesAgainst) * 100)}%` }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {proposal.status === 'Active' && (
+                    <div className="flex gap-4">
+                      {votedId === proposal.id ? (
+                        <div className="w-full py-5 rounded-2xl bg-primary/10 border border-primary/20 text-primary font-black uppercase tracking-widest flex items-center justify-center gap-3">
+                          <CheckCircle2 size={20} /> You voted FOR
+                        </div>
+                      ) : (
+                        <>
+                          <button 
+                            onClick={() => handleVote(proposal.id)}
+                            disabled={isVoting}
+                            className="flex-1 py-5 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-lg shadow-primary/20"
+                          >
+                            {isVoting ? <RefreshCcw className="animate-spin" size={18} /> : "Vote FOR"}
+                          </button>
+                          <button 
+                            disabled={isVoting}
+                            className="flex-1 py-5 rounded-2xl border border-border text-foreground font-black text-sm uppercase tracking-widest hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 transition-all"
+                          >
+                            Vote AGAINST
+                          </button>
+                        </>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Governance Stats */}
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-            <BarChart3 className="text-emerald-500" size={20} />
-            Governance Stats
-          </h2>
-          
-          <div className="p-8 rounded-3xl bg-slate-950/40 border border-emerald-950/30 backdrop-blur-md space-y-8">
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">DAO Health</h3>
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500">
-                  <Users size={24} />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">450</p>
-                  <p className="text-[10px] text-slate-500 uppercase font-bold">Active Voters</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500">
-                  <TrendingUp size={24} />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">74.2%</p>
-                  <p className="text-[10px] text-slate-500 uppercase font-bold">Quorum Participation</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="h-px bg-slate-800" />
-
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Recent Activity</h3>
-              {[
-                { action: 'Proposal #004 created', time: '12h ago' },
-                { action: 'Treasury payout $42k', time: '2d ago' },
-                { action: 'New auditor assigned', time: '5d ago' },
-              ].map((activity, i) => (
-                <div key={i} className="flex justify-between items-center text-xs">
-                  <span className="text-slate-400">{activity.action}</span>
-                  <span className="text-slate-600 font-mono">{activity.time}</span>
                 </div>
               ))}
             </div>
 
-            <button className="w-full py-3 rounded-xl border border-emerald-500/20 text-emerald-500 font-bold text-sm hover:bg-emerald-500/5 transition-all flex items-center justify-center gap-2">
-              Learn More About SD DAO <ArrowRight size={16} />
-            </button>
+            {/* Right Column: Stats & Activity */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="p-8 rounded-[2.5rem] bg-card border border-border shadow-xl">
+                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-8">DAO Metrics</h3>
+                <div className="space-y-6">
+                  {[
+                    { label: 'Active Voters', value: '450', icon: Users, trend: '+12' },
+                    { label: 'Quorum Reached', value: '74.2%', icon: Scale, trend: 'Optimal' },
+                    { label: 'Total UAT Staked', value: '85M', icon: Shield, trend: '92%' },
+                  ].map((stat) => (
+                    <div key={stat.label} className="flex items-center gap-4 p-4 rounded-2xl bg-foreground/[0.02] border border-border group hover:border-primary/30 transition-all">
+                      <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform">
+                        <stat.icon size={20} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</p>
+                        <p className="text-xl font-black text-foreground">{stat.value}</p>
+                      </div>
+                      <span className="text-[9px] font-black text-primary bg-primary/10 px-2 py-1 rounded-lg uppercase tracking-widest">{stat.trend}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-8 rounded-[2.5rem] bg-card border border-border shadow-xl space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                    <Activity size={20} />
+                  </div>
+                  <h3 className="text-sm font-black text-foreground tracking-tight">Recent Votes</h3>
+                </div>
+                <div className="space-y-4">
+                  {[
+                    { user: '0x12...3456', action: 'FOR', time: '2h ago', color: 'emerald' },
+                    { user: '0xab...cdef', action: 'FOR', time: '5h ago', color: 'emerald' },
+                    { user: '0x78...9012', action: 'AGAINST', time: '8h ago', color: 'rose' },
+                  ].map((activity, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-all group cursor-pointer">
+                      <div className="flex items-center gap-3">
+                        <div className={cn("w-1.5 h-1.5 rounded-full", activity.color === 'emerald' ? "bg-emerald-500" : "bg-rose-500")} />
+                        <span className="text-[11px] font-black text-foreground font-mono group-hover:text-primary transition-colors">{activity.user}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={cn("text-[9px] font-black uppercase tracking-widest", activity.color === 'emerald' ? "text-emerald-500" : "text-rose-500")}>{activity.action}</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{activity.time}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button className="flex items-center justify-between w-full p-4 rounded-2xl bg-foreground/5 hover:bg-foreground/10 transition-all group mt-4">
+                  <span className="text-[10px] font-black uppercase tracking-widest">View Governance Logs</span>
+                  <ExternalLink size={16} className="text-slate-400 group-hover:text-primary transition-colors" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Placeholder for other tabs */}
+        {activeTab !== 'proposals' && (
+          <motion.div 
+            key={activeTab}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="p-12 rounded-[3rem] bg-card border border-border shadow-xl flex flex-col items-center justify-center text-center min-h-[500px]"
+          >
+            <div className="p-6 rounded-[2.5rem] bg-primary/10 text-primary mb-8 animate-pulse">
+              <Activity size={48} />
+            </div>
+            <h2 className="text-2xl font-black text-foreground tracking-tight mb-4 uppercase">{activeTab} Interface</h2>
+            <p className="text-slate-500 font-medium max-w-md">Detailed configuration for voting delegation, UAT staking rewards, and institutional treasury flows are being initialized.</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 4. GOVERNANCE PROTOCOL FOOTER */}
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="p-10 rounded-[3rem] bg-slate-900 dark:bg-slate-950 text-white border border-slate-800 shadow-2xl relative overflow-hidden"
+      >
+        <div className="absolute -top-24 -right-24 opacity-5 pointer-events-none">
+          <Shield size={400} strokeWidth={0.5} />
+        </div>
+
+        <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-center">
+          <div className="flex-1 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-primary/20 text-primary border border-primary/20">
+                <Landmark size={24} />
+              </div>
+              <h2 className="text-2xl font-black tracking-tight leading-none">Treasury & Protocol Control</h2>
+            </div>
+            <p className="text-lg text-slate-400 leading-relaxed font-medium max-w-3xl">
+              The SD Covenant DAO empowers institutional holders to shape the protocol&apos;s future. All approved proposals are executed via <span className="text-primary font-bold">Timelock Smart Contracts</span> to ensure maximum security and transparency.
+            </p>
+            <div className="flex gap-4">
+              <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                <Shield size={12} className="text-primary" /> Multi-sig Secured
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                <Clock size={12} className="text-primary" /> 48h Timelock
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                <Scale size={12} className="text-primary" /> Weighted Voting
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </motion.section>
     </div>
   );
 }

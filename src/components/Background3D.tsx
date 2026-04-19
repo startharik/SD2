@@ -4,6 +4,7 @@ import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, Float, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTheme } from 'next-themes';
 
 function BuildingModel() {
   const { scene } = useGLTF('/building.glb');
@@ -57,6 +58,17 @@ function BuildingModel() {
 }
 
 export default function Background3D() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || resolvedTheme !== 'dark') {
+    return null;
+  }
+
   return (
     <div className="fixed inset-0 z-0 pointer-events-none bg-transparent h-screen w-full">
       <Canvas
